@@ -1,217 +1,432 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Polymarket · Copa do Mundo 2026</title>
+  <title>Polymarket · Copa 2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── TOKENS CLARO ─── */
     :root {
-      --bg: #f5f5f7; --surface: #ffffff; --surface2: #f2f2f7;
-      --border: rgba(0,0,0,0.08); --text: #1d1d1f; --muted: #6e6e73;
-      --accent: #0071e3; --green: #34c759; --red: #ff3b30; --yellow: #ff9f0a;
-      --radius: 14px; --shadow: 0 2px 20px rgba(0,0,0,0.07);
-      --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      --bg:        #f5f5f7;
+      --surface:   #ffffff;
+      --surface2:  #f2f2f7;
+      --surface3:  #e8e8ed;
+      --border:    rgba(0,0,0,0.09);
+      --text:      #1d1d1f;
+      --muted:     #6e6e73;
+      --accent:    #0071e3;
+      --green:     #34c759;
+      --red:       #ff3b30;
+      --yellow:    #ff9f0a;
+      --shadow:    0 2px 16px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.10);
+      --radius:    14px;
+      --header-bg: rgba(255,255,255,0.88);
+      --toast-bg:  #1d1d1f;
+      --toast-txt: #ffffff;
     }
-    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-    /* HEADER */
-    header { background: rgba(255,255,255,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; }
+    /* ─── TOKENS ESCURO ─── */
+    [data-theme="dark"] {
+      --bg:        #000000;
+      --surface:   #1c1c1e;
+      --surface2:  #2c2c2e;
+      --surface3:  #3a3a3c;
+      --border:    rgba(255,255,255,0.10);
+      --text:      #f5f5f7;
+      --muted:     #98989d;
+      --accent:    #2196f3;
+      --green:     #30d158;
+      --red:       #ff453a;
+      --yellow:    #ffd60a;
+      --shadow:    0 2px 16px rgba(0,0,0,0.40);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.60);
+      --header-bg: rgba(28,28,30,0.92);
+      --toast-bg:  #f5f5f7;
+      --toast-txt: #1d1d1f;
+    }
+
+    /* ─── BASE ─── */
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background .25s, color .25s;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--header-bg);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      transition: background .25s;
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 20px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .logo { font-size: 15px; font-weight: 600; letter-spacing: -.3px; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
     .logo-dot { color: var(--accent); }
-    .live-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
-    .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+    .header-right { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .live-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* LAYOUT */
-    main { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+    /* THEME TOGGLE */
+    .theme-toggle {
+      width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0; transition: background .2s, border-color .2s;
+    }
+    .theme-toggle:hover { background: var(--surface3); }
 
-    /* KPI STRIP */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 10px; margin-bottom: 24px; }
-    .kpi-card { background: var(--surface); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-    .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px; }
-    .kpi-value { font-size: 24px; font-weight: 600; letter-spacing: -.8px; line-height: 1; }
+    /* ─── MAIN ─── */
+    main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 80px; }
+
+    /* ─── KPI GRID ─── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px; margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 16px 18px; box-shadow: var(--shadow); border: 1px solid var(--border);
+      transition: background .25s, border-color .25s;
+    }
+    .kpi-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px; }
+    .kpi-value { font-size: 22px; font-weight: 600; letter-spacing: -.7px; line-height: 1; }
     .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
     .kv-green { color: var(--green); } .kv-red { color: var(--red); } .kv-blue { color: var(--accent); }
 
-    /* TABS */
-    .tabs { display: flex; gap: 3px; background: var(--surface2); border-radius: 10px; padding: 3px; width: fit-content; margin-bottom: 20px; }
-    .tab-btn { font-family: var(--font); font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: 7px; border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
+    /* ─── TABS ─── */
+    .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; margin-bottom: 18px; }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+    .tabs { display: flex; gap: 3px; background: var(--surface2); border-radius: 10px; padding: 3px; width: max-content; min-width: 100%; transition: background .25s; }
+    .tab-btn {
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      padding: 7px 15px; border-radius: 7px; border: none;
+      background: transparent; color: var(--muted); cursor: pointer;
+      transition: all .15s; white-space: nowrap; flex: 1;
+    }
     .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 6px rgba(0,0,0,.08); }
     .panel { display: none; } .panel.active { display: block; }
 
-    /* CARD */
-    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 18px; overflow: hidden; }
-    .card-body { padding: 20px; }
-    .card-title { font-size: 16px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 16px; }
+    /* ─── CARD ─── */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      margin-bottom: 16px; overflow: hidden;
+      transition: background .25s, border-color .25s;
+    }
+    .card-body { padding: 18px; }
+    .card-title { font-size: 15px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 14px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
 
-    /* FORM */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 10px; }
+    /* ─── FORM ─── */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; }
     .fg { display: flex; flex-direction: column; gap: 4px; }
     .fg label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-    .fg input, .fg select { font-family: var(--font); font-size: 14px; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; width: 100%; }
+    .fg input, .fg select {
+      font-family: inherit; font-size: 14px; padding: 9px 11px;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); outline: none;
+      transition: border-color .15s, box-shadow .15s, background .25s;
+      width: 100%; -webkit-appearance: none; appearance: none;
+    }
     .fg input:focus, .fg select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
-    .form-actions { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
+    .form-actions { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; flex-wrap: wrap; }
 
-    /* BUTTONS */
-    .btn { font-family: var(--font); font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; transition: all .15s; }
+    /* ─── BUTTONS ─── */
+    .btn {
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      padding: 9px 16px; border-radius: 8px; border: none; cursor: pointer;
+      transition: all .15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
+    }
     .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #0077ed; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,113,227,.28); }
+    .btn-primary:active { opacity: .85; transform: scale(.98); }
     .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: var(--surface2); }
+    .btn-ghost:active { background: var(--surface2); }
     .btn-sm { font-size: 12px; padding: 5px 11px; border-radius: 6px; }
     .btn-green { background: rgba(52,199,89,.12); color: #1a7a36; border: 1px solid rgba(52,199,89,.25); }
-    .btn-green:hover { background: rgba(52,199,89,.2); }
+    [data-theme="dark"] .btn-green { color: #30d158; }
+    .btn-green:active { background: rgba(52,199,89,.22); }
+    .btn-full { width: 100%; justify-content: center; }
 
-    /* TABLE SHARED */
-    .table-wrap { overflow-x: auto; }
+    /* ─── TABLE ─── */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    thead th { text-align: left; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    thead th {
+      text-align: left; font-size: 11px; font-weight: 500; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .5px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
     tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: var(--surface2); }
     tbody td { padding: 11px 14px; vertical-align: middle; }
 
-    /* BADGES */
+    /* ─── MOBILE CARD LIST (apostas) ─── */
+    .aposta-list { display: none; }
+    .aposta-card {
+      background: var(--surface); border-radius: 12px; padding: 14px 16px;
+      border: 1px solid var(--border); margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .aposta-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .aposta-card-partida { font-weight: 600; font-size: 14px; line-height: 1.3; }
+    .aposta-card-data { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .aposta-card-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .aposta-card-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+    /* ─── JOGO MOBILE CARD ─── */
+    .jogo-list { display: none; }
+    .jogo-card {
+      background: var(--surface); border-radius: 12px; padding: 14px 16px;
+      border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow);
+      transition: background .25s;
+    }
+    .jogo-card.brasil { border-left: 3px solid var(--green); }
+    .jogo-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .jogo-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .jogo-card-partida { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+    .jogo-card-local { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .jogo-card-odds { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+
+    /* ─── BADGES ─── */
     .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
     .badge-green { background: rgba(52,199,89,.12); color: #1a7a36; }
     .badge-red   { background: rgba(255,59,48,.12);  color: #c0392b; }
     .badge-yellow{ background: rgba(255,159,10,.12); color: #a0620a; }
-    .badge-blue  { background: rgba(0,113,227,.1);   color: #005bb5; }
-    .badge-gray  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-
-    /* GRUPO BADGE */
+    [data-theme="dark"] .badge-green { color: #30d158; }
+    [data-theme="dark"] .badge-red   { color: #ff453a; }
+    [data-theme="dark"] .badge-yellow{ color: #ffd60a; }
     .grupo-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); letter-spacing: .4px; }
+    .rodada-tag { font-size: 10px; color: var(--muted); }
 
-    /* ODDS CELL */
-    .odds-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .odd-pill { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
-    .odd-home { background: rgba(0,113,227,.1); color: #005bb5; }
-    .odd-draw { background: rgba(255,159,10,.1); color: #8a5700; }
-    .odd-away { background: rgba(255,59,48,.1); color: #c0392b; }
+    /* ─── ODDS PILLS ─── */
+    .odds-cell { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .odd-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .odd-home { background: rgba(0,113,227,.1);   color: #005bb5; }
+    .odd-draw { background: rgba(255,159,10,.1);  color: #8a5700; }
+    .odd-away { background: rgba(255,59,48,.1);   color: #c0392b; }
+    [data-theme="dark"] .odd-home { color: #70b8ff; }
+    [data-theme="dark"] .odd-draw { color: #ffd60a; }
+    [data-theme="dark"] .odd-away { color: #ff6b63; }
     .odds-loading { font-size: 11px; color: var(--muted); font-style: italic; }
 
-    /* PROFIT */
+    /* ─── PROFIT ─── */
     .td-profit.pos { color: var(--green); font-weight: 600; }
     .td-profit.neg { color: var(--red); font-weight: 600; }
 
-    /* GRUPO SECTION HEADER */
-    .group-section { margin-bottom: 4px; }
-    .group-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px 8px; background: var(--surface2); border-bottom: 1px solid var(--border); }
-    .group-header-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
-
-    /* FILTER ROW */
+    /* ─── FILTER ROW ─── */
     .filter-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-    .filter-row select, .filter-row input { font-family: var(--font); font-size: 13px; padding: 7px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; cursor: pointer; }
-    .filter-row input { width: 220px; }
-    .filter-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
+    .filter-sel, .filter-inp {
+      font-family: inherit; font-size: 13px; padding: 8px 11px;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); outline: none; cursor: pointer;
+      transition: background .25s, border-color .15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .filter-inp { min-width: 0; flex: 1; max-width: 220px; }
+    .filter-sel:focus, .filter-inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
 
-    /* CHART */
+    /* ─── CHART ─── */
     .chart-wrap { position: relative; height: 200px; }
     canvas#chartCanvas { width: 100%; height: 100%; }
 
-    /* COMPOUND */
-    .compound-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 8px; }
-    .ci { background: var(--surface2); border-radius: 10px; padding: 12px 14px; border: 1px solid var(--border); }
+    /* ─── COMPOUND ─── */
+    .compound-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px,1fr)); gap: 8px; }
+    .ci { background: var(--surface2); border-radius: 10px; padding: 12px 13px; border: 1px solid var(--border); transition: background .25s; }
     .ci-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
-    .ci-value { font-size: 15px; font-weight: 600; letter-spacing: -.3px; }
+    .ci-value { font-size: 14px; font-weight: 600; letter-spacing: -.3px; }
 
-    /* BANKROLL ROW */
-    .bk-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    /* ─── BANKROLL ROW ─── */
+    .bk-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .bk-row label { font-size: 13px; color: var(--muted); }
-    .bk-row input, .bk-row select { font-family: var(--font); font-size: 14px; font-weight: 600; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; }
-    .bk-row input { width: 120px; }
-    .bk-row input:focus, .bk-row select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
+    .bk-inp, .bk-sel {
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); outline: none;
+      transition: background .25s; -webkit-appearance: none; appearance: none;
+    }
+    .bk-inp { width: 120px; }
+    .bk-inp:focus, .bk-sel:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
 
-    /* EMPTY */
+    /* ─── EMPTY ─── */
     .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty-icon { font-size: 32px; margin-bottom: 8px; }
-    .empty-state p { font-size: 13px; }
+    .empty-state p { font-size: 13px; line-height: 1.5; }
 
-    /* MODAL */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; }
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(6px);
+      z-index: 200; align-items: flex-end; justify-content: center;
+      padding: 0;
+    }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: 18px; padding: 26px; width: 90%; max-width: 420px; box-shadow: 0 8px 40px rgba(0,0,0,.12); animation: slideUp .2s ease; }
-    @keyframes slideUp { from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1} }
+    .modal {
+      background: var(--surface); width: 100%; max-width: 480px;
+      border-radius: 20px 20px 0 0; padding: 24px 20px 36px;
+      box-shadow: var(--shadow-lg); animation: slideUp .25s ease;
+      transition: background .25s;
+    }
+    @keyframes slideUp { from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1} }
+    .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--surface3); margin: 0 auto 18px; }
     .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+    .modal-actions .btn { flex: 1; justify-content: center; }
     .modal-fg { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
     .modal-fg label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-    .modal-fg input, .modal-fg select { font-family: var(--font); font-size: 14px; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; width: 100%; }
+    .modal-fg input, .modal-fg select {
+      font-family: inherit; font-size: 15px; padding: 11px 12px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); outline: none; width: 100%;
+      -webkit-appearance: none; appearance: none; transition: background .25s;
+    }
     .modal-fg input:focus, .modal-fg select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
+    .retorno-box { background: var(--surface2); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--muted); margin-top: 4px; transition: background .25s; }
 
-    /* NOTIFY TOAST */
-    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1d1d1f; color: #fff; font-size: 13px; padding: 10px 20px; border-radius: 20px; opacity: 0; transition: all .3s; z-index: 999; pointer-events: none; }
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--toast-bg); color: var(--toast-txt);
+      font-size: 13px; font-weight: 500;
+      padding: 10px 20px; border-radius: 20px;
+      opacity: 0; transition: all .28s; z-index: 999; pointer-events: none;
+      white-space: nowrap;
+    }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media(max-width:600px){ main{padding:16px 12px 60px} .kpi-value{font-size:20px} }
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      /* KPI: 2 colunas + última sozinha */
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .kpi-card:last-child { grid-column: 1 / -1; }
+      .kpi-value { font-size: 20px; }
+
+      /* Tabs scroll */
+      .tabs { min-width: unset; }
+      .tab-btn { font-size: 12px; padding: 7px 12px; }
+
+      /* Jogos: esconder tabela, mostrar cards */
+      .panel-jogos-table { display: none !important; }
+      .jogo-list { display: block; }
+
+      /* Apostas: esconder tabela, mostrar cards */
+      .panel-apostas-table { display: none !important; }
+      .aposta-list { display: block; }
+
+      /* Form: 1 coluna */
+      .form-grid { grid-template-columns: 1fr 1fr; }
+
+      /* Modal: bottom sheet ja configurado */
+      .modal-overlay { align-items: flex-end; }
+
+      /* Bankroll row */
+      .bk-row { flex-direction: column; align-items: flex-start; }
+      .bk-inp { width: 100%; }
+      .bk-sel { width: 100%; }
+
+      /* Filter row: scroll */
+      .filter-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+      .filter-row::-webkit-scrollbar { display: none; }
+      .filter-inp { max-width: 160px; }
+    }
+
+    @media (max-width: 400px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .kpi-value { font-size: 18px; }
+      main { padding: 16px 12px 80px; }
+    }
+
+    /* Desktop: modal centralizado */
+    @media (min-width: 769px) {
+      .modal-overlay { align-items: center; }
+      .modal { border-radius: 20px; max-width: 480px; padding: 28px; }
+    }
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="logo">Polymarket <span class="logo-dot">·</span> Copa 2026</div>
-    <div class="live-badge">
-      <div class="dot-live"></div>
-      <span id="cotacao-label">USD/BRL carregando...</span>
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="dot-live"></div>
+        <span id="cotacao-label">Carregando...</span>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" title="Alternar tema" onclick="toggleTheme()">🌙</button>
     </div>
   </div>
 </header>
 
 <main>
+
   <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi-card">
-      <div class="kpi-label">Bankroll Atual</div>
+      <div class="kpi-label">Bankroll</div>
       <div class="kpi-value kv-blue" id="kpi-bankroll">$0,00</div>
       <div class="kpi-sub" id="kpi-bankroll-brl">R$ 0,00</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Lucro / Prejuízo</div>
+      <div class="kpi-label">Lucro / Prej.</div>
       <div class="kpi-value" id="kpi-lucro">$0,00</div>
       <div class="kpi-sub" id="kpi-lucro-brl">R$ 0,00</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">ROI Total</div>
+      <div class="kpi-label">ROI</div>
       <div class="kpi-value" id="kpi-roi">0,00%</div>
       <div class="kpi-sub" id="kpi-count">0 apostas</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Taxa de Acerto</div>
+      <div class="kpi-label">Acerto</div>
       <div class="kpi-value kv-blue" id="kpi-taxa">—</div>
       <div class="kpi-sub" id="kpi-wl">0W / 0L</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Sequência</div>
       <div class="kpi-value kv-green" id="kpi-streak">0</div>
-      <div class="kpi-sub">acertos seguidos</div>
+      <div class="kpi-sub">acertos</div>
     </div>
   </div>
 
   <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('jogos')">Jogos & Odds</button>
-    <button class="tab-btn" onclick="switchTab('apostas')">Minhas Apostas</button>
-    <button class="tab-btn" onclick="switchTab('juros')">Juros Compostos</button>
-    <button class="tab-btn" onclick="switchTab('grafico')">Evolução</button>
+  <div class="tabs-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('jogos')">Jogos & Odds</button>
+      <button class="tab-btn" onclick="switchTab('apostas')">Apostas</button>
+      <button class="tab-btn" onclick="switchTab('juros')">Juros</button>
+      <button class="tab-btn" onclick="switchTab('grafico')">Evolução</button>
+    </div>
   </div>
 
-  <!-- ── PANEL JOGOS ── -->
+  <!-- ── JOGOS ── -->
   <div class="panel active" id="panel-jogos">
     <div class="card">
       <div class="card-body" style="padding-bottom:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-          <div class="card-title" style="margin:0">Tabela de Jogos — Copa do Mundo 2026</div>
-          <button class="btn btn-ghost btn-sm" onclick="fetchOddsPolymarket()" id="btn-refresh-odds">
-            Atualizar Odds Polymarket
-          </button>
+        <div class="card-header">
+          <div class="card-title" style="margin:0">Copa do Mundo 2026</div>
+          <button class="btn btn-ghost btn-sm" onclick="fetchOddsPolymarket()" id="btn-refresh-odds">Atualizar Odds</button>
         </div>
         <div class="filter-row">
-          <select id="filtro-grupo" onchange="renderJogos()">
-            <option value="todos">Todos os Grupos</option>
+          <select class="filter-sel" id="filtro-grupo" onchange="renderJogos()">
+            <option value="todos">Todos Grupos</option>
             <option value="A">Grupo A</option><option value="B">Grupo B</option>
             <option value="C">Grupo C</option><option value="D">Grupo D</option>
             <option value="E">Grupo E</option><option value="F">Grupo F</option>
@@ -219,51 +434,49 @@
             <option value="I">Grupo I</option><option value="J">Grupo J</option>
             <option value="K">Grupo K</option><option value="L">Grupo L</option>
           </select>
-          <select id="filtro-rodada" onchange="renderJogos()">
-            <option value="todos">Todas as Rodadas</option>
+          <select class="filter-sel" id="filtro-rodada" onchange="renderJogos()">
+            <option value="todos">Todas Rodadas</option>
             <option value="1">1ª Rodada</option>
             <option value="2">2ª Rodada</option>
             <option value="3">3ª Rodada</option>
           </select>
-          <input type="text" id="busca-jogo" placeholder="Buscar seleção..." oninput="renderJogos()" />
+          <input class="filter-inp" type="text" id="busca-jogo" placeholder="Buscar seleção…" oninput="renderJogos()" />
         </div>
       </div>
-      <div class="table-wrap">
+      <!-- Desktop table -->
+      <div class="table-wrap panel-jogos-table">
         <table>
           <thead>
             <tr>
-              <th>Grupo</th>
-              <th>Rodada</th>
-              <th>Data (Brasília)</th>
-              <th>Partida</th>
-              <th>Local</th>
-              <th>Odds Polymarket</th>
-              <th></th>
+              <th>Grupo</th><th>Rodada</th><th>Data</th><th>Partida</th>
+              <th>Local</th><th>Odds Polymarket</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-jogos"></tbody>
         </table>
       </div>
     </div>
+    <!-- Mobile cards -->
+    <div class="jogo-list" id="jogo-list-mobile"></div>
   </div>
 
-  <!-- ── PANEL APOSTAS ── -->
+  <!-- ── APOSTAS ── -->
   <div class="panel" id="panel-apostas">
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" style="margin-bottom:14px">
       <div class="card-body">
         <div class="card-title">Nova Aposta</div>
         <div class="form-grid">
           <div class="fg">
-            <label>Partida / Mercado</label>
-            <input type="text" id="f-partida" placeholder="Ex: Brasil x Marrocos" />
+            <label>Partida</label>
+            <input type="text" id="f-partida" placeholder="Brasil x Marrocos" />
           </div>
           <div class="fg">
-            <label>Valor (USD $)</label>
-            <input type="number" id="f-valor" placeholder="0.00" step="0.01" min="0" />
+            <label>Valor (USD)</label>
+            <input type="number" id="f-valor" placeholder="0.00" step="0.01" min="0" inputmode="decimal" />
           </div>
           <div class="fg">
-            <label>Odd (decimal)</label>
-            <input type="number" id="f-odd" placeholder="1.85" step="0.01" min="1" />
+            <label>Odd</label>
+            <input type="number" id="f-odd" placeholder="1.85" step="0.01" min="1" inputmode="decimal" />
           </div>
           <div class="fg">
             <label>Data</label>
@@ -280,9 +493,9 @@
           <div class="fg">
             <label>Categoria</label>
             <select id="f-categoria">
-              <option value="vencedor">Vencedor da Partida</option>
+              <option value="vencedor">Vencedor</option>
               <option value="ambas">Ambas Marcam</option>
-              <option value="gols">Total de Gols</option>
+              <option value="gols">Total Gols</option>
               <option value="campeao">Campeão</option>
               <option value="outro">Outro</option>
             </select>
@@ -290,16 +503,16 @@
         </div>
         <div class="form-actions">
           <button class="btn btn-ghost" onclick="limparForm()">Limpar</button>
-          <button class="btn btn-primary" onclick="adicionarAposta()">Registrar Aposta</button>
+          <button class="btn btn-primary" onclick="adicionarAposta()">Registrar</button>
         </div>
       </div>
     </div>
     <div class="card">
       <div class="card-body" style="padding-bottom:0">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div class="card-header">
           <div class="card-title" style="margin:0">Histórico</div>
           <div style="display:flex;gap:6px">
-            <select id="filtro-resultado" class="btn btn-ghost btn-sm" style="cursor:pointer" onchange="renderApostas()">
+            <select class="filter-sel btn-sm" id="filtro-resultado" onchange="renderApostas()">
               <option value="todos">Todos</option>
               <option value="ganhou">Ganhou</option>
               <option value="perdeu">Perdeu</option>
@@ -309,34 +522,41 @@
           </div>
         </div>
       </div>
-      <div class="table-wrap">
+      <!-- Desktop table -->
+      <div class="table-wrap panel-apostas-table">
         <table>
           <thead>
             <tr>
               <th>#</th><th>Data</th><th>Partida</th><th>Valor</th><th>Odd</th>
-              <th>Retorno</th><th>Lucro/Prej.</th><th>BRL</th><th>Status</th><th></th>
+              <th>Retorno</th><th>Lucro</th><th>BRL</th><th>Status</th><th></th>
             </tr>
           </thead>
           <tbody id="tbody-apostas"></tbody>
         </table>
-        <div id="empty-apostas" class="empty-state" style="display:none">
+        <div id="empty-apostas-table" class="empty-state" style="display:none">
           <div class="empty-icon">📋</div>
-          <p>Nenhuma aposta ainda.<br>Clique em "Apostar" em qualquer jogo da tabela.</p>
+          <p>Nenhuma aposta ainda.<br>Clique em "Apostar" nos jogos.</p>
         </div>
+      </div>
+      <!-- Mobile cards -->
+      <div class="aposta-list" id="aposta-list-mobile" style="padding:12px"></div>
+      <div id="empty-apostas-mobile" class="empty-state" style="display:none">
+        <div class="empty-icon">📋</div>
+        <p>Nenhuma aposta ainda.<br>Clique em "Apostar" nos jogos.</p>
       </div>
     </div>
   </div>
 
-  <!-- ── PANEL JUROS ── -->
+  <!-- ── JUROS ── -->
   <div class="panel" id="panel-juros">
-    <div class="card" style="margin-bottom:16px">
+    <div class="card" style="margin-bottom:14px">
       <div class="card-body">
-        <div class="card-title">Configuração do Bankroll</div>
+        <div class="card-title">Bankroll</div>
         <div class="bk-row">
-          <label>Bankroll inicial (USD)</label>
-          <input type="number" id="bankroll-inicial" value="100" step="0.01" oninput="salvarBankroll();calcularJuros()" />
+          <label>Inicial (USD)</label>
+          <input type="number" class="bk-inp" id="bankroll-inicial" value="100" step="0.01" inputmode="decimal" oninput="salvarBankroll();calcularJuros()" />
           <label>Reinvestimento</label>
-          <select id="taxa-reinvest" onchange="calcularJuros()">
+          <select class="bk-sel" id="taxa-reinvest" onchange="calcularJuros()">
             <option value="1">100%</option>
             <option value="0.75">75%</option>
             <option value="0.5">50%</option>
@@ -347,17 +567,15 @@
     </div>
     <div class="card">
       <div class="card-body">
-        <div class="card-title">Projeção de Crescimento (Juros Compostos)</div>
+        <div class="card-title">Projeção de Crescimento</div>
         <div class="compound-grid" id="compound-grid">
-          <div class="empty-state" style="grid-column:1/-1;padding:28px">
-            <p>Registre apostas ganhas para ver a projeção.</p>
-          </div>
+          <div class="empty-state" style="grid-column:1/-1;padding:28px"><p>Registre apostas ganhas para ver a projeção.</p></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── PANEL GRAFICO ── -->
+  <!-- ── GRÁFICO ── -->
   <div class="panel" id="panel-grafico">
     <div class="card">
       <div class="card-body">
@@ -372,12 +590,14 @@
       </div>
     </div>
   </div>
+
 </main>
 
 <!-- MODAL EDITAR -->
 <div class="modal-overlay" id="modal-editar">
   <div class="modal">
-    <div class="modal-title">Editar Aposta</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar Resultado</div>
     <div class="modal-fg">
       <label>Resultado</label>
       <select id="edit-resultado">
@@ -397,21 +617,22 @@
 <!-- MODAL APOSTAR JOGO -->
 <div class="modal-overlay" id="modal-aposta-jogo">
   <div class="modal">
-    <div class="modal-title" id="modal-jogo-title">Apostar no jogo</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-jogo-title">Apostar</div>
     <div class="modal-fg">
-      <label>Selecionar mercado / odd</label>
+      <label>Mercado / Odd</label>
       <select id="modal-odd-sel"></select>
     </div>
     <div class="modal-fg">
-      <label>Valor da aposta (USD $)</label>
-      <input type="number" id="modal-valor" placeholder="0.00" step="0.01" min="0" />
+      <label>Valor (USD $)</label>
+      <input type="number" id="modal-valor" placeholder="0.00" step="0.01" min="0" inputmode="decimal" />
     </div>
     <div class="modal-fg">
       <label>Data</label>
       <input type="date" id="modal-data" />
     </div>
-    <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--muted);margin-top:4px">
-      Retorno estimado: <strong id="modal-retorno">—</strong> &nbsp;|&nbsp; Lucro estimado: <strong id="modal-lucro">—</strong>
+    <div class="retorno-box">
+      Retorno: <strong id="modal-retorno">—</strong> &nbsp;·&nbsp; Lucro: <strong id="modal-lucro">—</strong>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="fecharModalJogo()">Cancelar</button>
@@ -423,608 +644,521 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// DADOS DOS JOGOS — Copa do Mundo 2026
-// ═══════════════════════════════════════════════
+// ═══════════════════ JOGOS ═══════════════════
 const JOGOS = [
-  // GRUPO A
-  {id:1, grupo:'A', rodada:1, data:'2026-06-11', hora:'16:00', home:'México', away:'África do Sul', local:'Cidade do México'},
-  {id:2, grupo:'A', rodada:1, data:'2026-06-11', hora:'23:00', home:'Coreia do Sul', away:'Playoff UEFA D', local:'Guadalajara'},
-  {id:3, grupo:'A', rodada:2, data:'2026-06-18', hora:'13:00', home:'Playoff UEFA D', away:'África do Sul', local:'Atlanta'},
-  {id:4, grupo:'A', rodada:2, data:'2026-06-18', hora:'22:00', home:'México', away:'Coreia do Sul', local:'Guadalajara'},
-  {id:5, grupo:'A', rodada:3, data:'2026-06-24', hora:'22:00', home:'Playoff UEFA D', away:'México', local:'Cidade do México'},
-  {id:6, grupo:'A', rodada:3, data:'2026-06-24', hora:'22:00', home:'África do Sul', away:'Coreia do Sul', local:'Monterrey'},
-  // GRUPO B
-  {id:7, grupo:'B', rodada:1, data:'2026-06-12', hora:'16:00', home:'Canadá', away:'Playoff UEFA A', local:'Toronto'},
-  {id:8, grupo:'B', rodada:1, data:'2026-06-13', hora:'16:00', home:'Catar', away:'Suíça', local:'San Francisco'},
-  {id:9, grupo:'B', rodada:2, data:'2026-06-18', hora:'16:00', home:'Suíça', away:'Playoff UEFA A', local:'Los Angeles'},
-  {id:10, grupo:'B', rodada:2, data:'2026-06-18', hora:'19:00', home:'Canadá', away:'Catar', local:'Vancouver'},
-  {id:11, grupo:'B', rodada:3, data:'2026-06-24', hora:'16:00', home:'Suíça', away:'Canadá', local:'Vancouver'},
-  {id:12, grupo:'B', rodada:3, data:'2026-06-24', hora:'16:00', home:'Playoff UEFA A', away:'Catar', local:'Seattle'},
-  // GRUPO C — BRASIL
-  {id:13, grupo:'C', rodada:1, data:'2026-06-13', hora:'19:00', home:'Brasil', away:'Marrocos', local:'Nova York/Nova Jersey'},
-  {id:14, grupo:'C', rodada:1, data:'2026-06-13', hora:'22:00', home:'Haiti', away:'Escócia', local:'Boston'},
-  {id:15, grupo:'C', rodada:2, data:'2026-06-19', hora:'19:00', home:'Escócia', away:'Marrocos', local:'Boston'},
-  {id:16, grupo:'C', rodada:2, data:'2026-06-19', hora:'22:00', home:'Brasil', away:'Haiti', local:'Filadélfia'},
-  {id:17, grupo:'C', rodada:3, data:'2026-06-24', hora:'19:00', home:'Escócia', away:'Brasil', local:'Miami'},
-  {id:18, grupo:'C', rodada:3, data:'2026-06-24', hora:'19:00', home:'Marrocos', away:'Haiti', local:'Atlanta'},
-  // GRUPO D
-  {id:19, grupo:'D', rodada:1, data:'2026-06-12', hora:'22:00', home:'Estados Unidos', away:'Paraguai', local:'Los Angeles'},
-  {id:20, grupo:'D', rodada:1, data:'2026-06-13', hora:'01:00', home:'Austrália', away:'Playoff UEFA B', local:'Vancouver'},
-  {id:21, grupo:'D', rodada:2, data:'2026-06-19', hora:'01:00', home:'Playoff UEFA B', away:'Paraguai', local:'San Francisco'},
-  {id:22, grupo:'D', rodada:2, data:'2026-06-19', hora:'16:00', home:'Estados Unidos', away:'Austrália', local:'Seattle'},
-  {id:23, grupo:'D', rodada:3, data:'2026-06-25', hora:'23:00', home:'Playoff UEFA B', away:'Estados Unidos', local:'Los Angeles'},
-  {id:24, grupo:'D', rodada:3, data:'2026-06-25', hora:'23:00', home:'Paraguai', away:'Austrália', local:'San Francisco'},
-  // GRUPO E
-  {id:25, grupo:'E', rodada:1, data:'2026-06-14', hora:'14:00', home:'Alemanha', away:'Curaçao', local:'Houston'},
-  {id:26, grupo:'E', rodada:1, data:'2026-06-14', hora:'20:00', home:'Costa do Marfim', away:'Equador', local:'Filadélfia'},
-  {id:27, grupo:'E', rodada:2, data:'2026-06-20', hora:'17:00', home:'Alemanha', away:'Costa do Marfim', local:'Toronto'},
-  {id:28, grupo:'E', rodada:2, data:'2026-06-20', hora:'21:00', home:'Equador', away:'Curaçao', local:'Kansas City'},
-  {id:29, grupo:'E', rodada:3, data:'2026-06-25', hora:'17:00', home:'Equador', away:'Alemanha', local:'Nova York/Nova Jersey'},
-  {id:30, grupo:'E', rodada:3, data:'2026-06-25', hora:'17:00', home:'Curaçao', away:'Costa do Marfim', local:'Filadélfia'},
-  // GRUPO F
-  {id:31, grupo:'F', rodada:1, data:'2026-06-14', hora:'17:00', home:'Holanda', away:'Japão', local:'Dallas'},
-  {id:32, grupo:'F', rodada:1, data:'2026-06-14', hora:'23:00', home:'Playoff UEFA C', away:'Tunísia', local:'Monterrey'},
-  {id:33, grupo:'F', rodada:2, data:'2026-06-20', hora:'14:00', home:'Holanda', away:'Playoff UEFA C', local:'Houston'},
-  {id:34, grupo:'F', rodada:2, data:'2026-06-21', hora:'01:00', home:'Tunísia', away:'Japão', local:'Monterrey'},
-  {id:35, grupo:'F', rodada:3, data:'2026-06-25', hora:'20:00', home:'Japão', away:'Playoff UEFA C', local:'Dallas'},
-  {id:36, grupo:'F', rodada:3, data:'2026-06-25', hora:'20:00', home:'Tunísia', away:'Holanda', local:'Kansas City'},
-  // GRUPO G
-  {id:37, grupo:'G', rodada:1, data:'2026-06-15', hora:'13:00', home:'Espanha', away:'Cabo Verde', local:'Atlanta'},
-  {id:38, grupo:'G', rodada:1, data:'2026-06-15', hora:'19:00', home:'Arábia Saudita', away:'Uruguai', local:'Miami'},
-  {id:39, grupo:'G', rodada:2, data:'2026-06-21', hora:'13:00', home:'Espanha', away:'Arábia Saudita', local:'Atlanta'},
-  {id:40, grupo:'G', rodada:2, data:'2026-06-21', hora:'19:00', home:'Uruguai', away:'Cabo Verde', local:'Miami'},
-  {id:41, grupo:'G', rodada:3, data:'2026-06-26', hora:'16:00', home:'Espanha', away:'Uruguai', local:'Guadalajara'},
-  {id:42, grupo:'G', rodada:3, data:'2026-06-26', hora:'21:00', home:'Cabo Verde', away:'Arábia Saudita', local:'Houston'},
-  // GRUPO H
-  {id:43, grupo:'H', rodada:1, data:'2026-06-15', hora:'16:00', home:'Bélgica', away:'Egito', local:'Seattle'},
-  {id:44, grupo:'H', rodada:1, data:'2026-06-15', hora:'22:00', home:'Irã', away:'Nova Zelândia', local:'Los Angeles'},
-  {id:45, grupo:'H', rodada:2, data:'2026-06-21', hora:'16:00', home:'Bélgica', away:'Irã', local:'Los Angeles'},
-  {id:46, grupo:'H', rodada:2, data:'2026-06-21', hora:'22:00', home:'Nova Zelândia', away:'Egito', local:'Vancouver'},
-  {id:47, grupo:'H', rodada:3, data:'2026-06-27', hora:'00:00', home:'Egito', away:'Irã', local:'Seattle'},
-  {id:48, grupo:'H', rodada:3, data:'2026-06-27', hora:'00:00', home:'Nova Zelândia', away:'Bélgica', local:'Vancouver'},
-  // GRUPO I
-  {id:49, grupo:'I', rodada:1, data:'2026-06-16', hora:'14:00', home:'Argentina', away:'Argélia', local:'Kansas City'},
-  {id:50, grupo:'I', rodada:1, data:'2026-06-17', hora:'01:00', home:'Áustria', away:'Jordânia', local:'San Francisco'},
-  {id:51, grupo:'I', rodada:2, data:'2026-06-22', hora:'14:00', home:'Argentina', away:'Áustria', local:'Dallas'},
-  {id:52, grupo:'I', rodada:2, data:'2026-06-23', hora:'00:00', home:'Jordânia', away:'Argélia', local:'San Francisco'},
-  {id:53, grupo:'I', rodada:3, data:'2026-06-27', hora:'23:00', home:'Argélia', away:'Áustria', local:'Kansas City'},
-  {id:54, grupo:'I', rodada:3, data:'2026-06-27', hora:'23:00', home:'Jordânia', away:'Argentina', local:'Dallas'},
-  // GRUPO J
-  {id:55, grupo:'J', rodada:1, data:'2026-06-16', hora:'16:00', home:'França', away:'Senegal', local:'Nova York/Nova Jersey'},
-  {id:56, grupo:'J', rodada:1, data:'2026-06-16', hora:'19:00', home:'Playoff Interconf.', away:'Noruega', local:'Boston'},
-  {id:57, grupo:'J', rodada:2, data:'2026-06-22', hora:'18:00', home:'França', away:'Playoff Interconf.', local:'Filadélfia'},
-  {id:58, grupo:'J', rodada:2, data:'2026-06-22', hora:'21:00', home:'Noruega', away:'Senegal', local:'Nova York/Nova Jersey'},
-  {id:59, grupo:'J', rodada:3, data:'2026-06-26', hora:'16:00', home:'Noruega', away:'França', local:'Boston'},
-  {id:60, grupo:'J', rodada:3, data:'2026-06-26', hora:'16:00', home:'Senegal', away:'Playoff Interconf.', local:'Toronto'},
-  // GRUPO K
-  {id:61, grupo:'K', rodada:1, data:'2026-06-17', hora:'14:00', home:'Portugal', away:'Repechagem 2', local:'Houston'},
-  {id:62, grupo:'K', rodada:1, data:'2026-06-17', hora:'23:00', home:'Uzbequistão', away:'Colômbia', local:'Cidade do México'},
-  {id:63, grupo:'K', rodada:2, data:'2026-06-23', hora:'14:00', home:'Portugal', away:'Uzbequistão', local:'Houston'},
-  {id:64, grupo:'K', rodada:2, data:'2026-06-23', hora:'23:00', home:'Colômbia', away:'Repechagem 2', local:'Guadalajara'},
-  {id:65, grupo:'K', rodada:3, data:'2026-06-27', hora:'20:30', home:'Colômbia', away:'Portugal', local:'Miami'},
-  {id:66, grupo:'K', rodada:3, data:'2026-06-27', hora:'20:30', home:'Repechagem 2', away:'Uzbequistão', local:'Atlanta'},
-  // GRUPO L
-  {id:67, grupo:'L', rodada:1, data:'2026-06-17', hora:'17:00', home:'Inglaterra', away:'Croácia', local:'Dallas'},
-  {id:68, grupo:'L', rodada:1, data:'2026-06-17', hora:'20:00', home:'Gana', away:'Panamá', local:'Toronto'},
-  {id:69, grupo:'L', rodada:2, data:'2026-06-23', hora:'17:00', home:'Inglaterra', away:'Gana', local:'Boston'},
-  {id:70, grupo:'L', rodada:2, data:'2026-06-23', hora:'20:00', home:'Panamá', away:'Croácia', local:'Toronto'},
-  {id:71, grupo:'L', rodada:3, data:'2026-06-27', hora:'18:00', home:'Panamá', away:'Inglaterra', local:'Nova York/Nova Jersey'},
-  {id:72, grupo:'L', rodada:3, data:'2026-06-27', hora:'18:00', home:'Croácia', away:'Gana', local:'Filadélfia'},
+  {id:1,  grupo:'A', rodada:1, data:'2026-06-11', hora:'16:00', home:'México',       away:'África do Sul',   local:'Cidade do México'},
+  {id:2,  grupo:'A', rodada:1, data:'2026-06-11', hora:'23:00', home:'Coreia do Sul',away:'Playoff UEFA D',  local:'Guadalajara'},
+  {id:3,  grupo:'A', rodada:2, data:'2026-06-18', hora:'13:00', home:'Playoff UEFA D',away:'África do Sul',  local:'Atlanta'},
+  {id:4,  grupo:'A', rodada:2, data:'2026-06-18', hora:'22:00', home:'México',       away:'Coreia do Sul',   local:'Guadalajara'},
+  {id:5,  grupo:'A', rodada:3, data:'2026-06-24', hora:'22:00', home:'Playoff UEFA D',away:'México',         local:'Cidade do México'},
+  {id:6,  grupo:'A', rodada:3, data:'2026-06-24', hora:'22:00', home:'África do Sul',away:'Coreia do Sul',   local:'Monterrey'},
+  {id:7,  grupo:'B', rodada:1, data:'2026-06-12', hora:'16:00', home:'Canadá',       away:'Playoff UEFA A',  local:'Toronto'},
+  {id:8,  grupo:'B', rodada:1, data:'2026-06-13', hora:'16:00', home:'Catar',        away:'Suíça',           local:'San Francisco'},
+  {id:9,  grupo:'B', rodada:2, data:'2026-06-18', hora:'16:00', home:'Suíça',        away:'Playoff UEFA A',  local:'Los Angeles'},
+  {id:10, grupo:'B', rodada:2, data:'2026-06-18', hora:'19:00', home:'Canadá',       away:'Catar',           local:'Vancouver'},
+  {id:11, grupo:'B', rodada:3, data:'2026-06-24', hora:'16:00', home:'Suíça',        away:'Canadá',          local:'Vancouver'},
+  {id:12, grupo:'B', rodada:3, data:'2026-06-24', hora:'16:00', home:'Playoff UEFA A',away:'Catar',          local:'Seattle'},
+  {id:13, grupo:'C', rodada:1, data:'2026-06-13', hora:'19:00', home:'Brasil',       away:'Marrocos',        local:'Nova York/NJ'},
+  {id:14, grupo:'C', rodada:1, data:'2026-06-13', hora:'22:00', home:'Haiti',        away:'Escócia',         local:'Boston'},
+  {id:15, grupo:'C', rodada:2, data:'2026-06-19', hora:'19:00', home:'Escócia',      away:'Marrocos',        local:'Boston'},
+  {id:16, grupo:'C', rodada:2, data:'2026-06-19', hora:'22:00', home:'Brasil',       away:'Haiti',           local:'Filadélfia'},
+  {id:17, grupo:'C', rodada:3, data:'2026-06-24', hora:'19:00', home:'Escócia',      away:'Brasil',          local:'Miami'},
+  {id:18, grupo:'C', rodada:3, data:'2026-06-24', hora:'19:00', home:'Marrocos',     away:'Haiti',           local:'Atlanta'},
+  {id:19, grupo:'D', rodada:1, data:'2026-06-12', hora:'22:00', home:'EUA',          away:'Paraguai',        local:'Los Angeles'},
+  {id:20, grupo:'D', rodada:1, data:'2026-06-13', hora:'01:00', home:'Austrália',    away:'Playoff UEFA B',  local:'Vancouver'},
+  {id:21, grupo:'D', rodada:2, data:'2026-06-19', hora:'01:00', home:'Playoff UEFA B',away:'Paraguai',       local:'San Francisco'},
+  {id:22, grupo:'D', rodada:2, data:'2026-06-19', hora:'16:00', home:'EUA',          away:'Austrália',       local:'Seattle'},
+  {id:23, grupo:'D', rodada:3, data:'2026-06-25', hora:'23:00', home:'Playoff UEFA B',away:'EUA',            local:'Los Angeles'},
+  {id:24, grupo:'D', rodada:3, data:'2026-06-25', hora:'23:00', home:'Paraguai',     away:'Austrália',       local:'San Francisco'},
+  {id:25, grupo:'E', rodada:1, data:'2026-06-14', hora:'14:00', home:'Alemanha',     away:'Curaçao',         local:'Houston'},
+  {id:26, grupo:'E', rodada:1, data:'2026-06-14', hora:'20:00', home:'Costa do Marfim',away:'Equador',       local:'Filadélfia'},
+  {id:27, grupo:'E', rodada:2, data:'2026-06-20', hora:'17:00', home:'Alemanha',     away:'Costa do Marfim', local:'Toronto'},
+  {id:28, grupo:'E', rodada:2, data:'2026-06-20', hora:'21:00', home:'Equador',      away:'Curaçao',         local:'Kansas City'},
+  {id:29, grupo:'E', rodada:3, data:'2026-06-25', hora:'17:00', home:'Equador',      away:'Alemanha',        local:'Nova York/NJ'},
+  {id:30, grupo:'E', rodada:3, data:'2026-06-25', hora:'17:00', home:'Curaçao',      away:'Costa do Marfim', local:'Filadélfia'},
+  {id:31, grupo:'F', rodada:1, data:'2026-06-14', hora:'17:00', home:'Holanda',      away:'Japão',           local:'Dallas'},
+  {id:32, grupo:'F', rodada:1, data:'2026-06-14', hora:'23:00', home:'Playoff UEFA C',away:'Tunísia',        local:'Monterrey'},
+  {id:33, grupo:'F', rodada:2, data:'2026-06-20', hora:'14:00', home:'Holanda',      away:'Playoff UEFA C',  local:'Houston'},
+  {id:34, grupo:'F', rodada:2, data:'2026-06-21', hora:'01:00', home:'Tunísia',      away:'Japão',           local:'Monterrey'},
+  {id:35, grupo:'F', rodada:3, data:'2026-06-25', hora:'20:00', home:'Japão',        away:'Playoff UEFA C',  local:'Dallas'},
+  {id:36, grupo:'F', rodada:3, data:'2026-06-25', hora:'20:00', home:'Tunísia',      away:'Holanda',         local:'Kansas City'},
+  {id:37, grupo:'G', rodada:1, data:'2026-06-15', hora:'13:00', home:'Espanha',      away:'Cabo Verde',      local:'Atlanta'},
+  {id:38, grupo:'G', rodada:1, data:'2026-06-15', hora:'19:00', home:'Arábia Saudita',away:'Uruguai',        local:'Miami'},
+  {id:39, grupo:'G', rodada:2, data:'2026-06-21', hora:'13:00', home:'Espanha',      away:'Arábia Saudita',  local:'Atlanta'},
+  {id:40, grupo:'G', rodada:2, data:'2026-06-21', hora:'19:00', home:'Uruguai',      away:'Cabo Verde',      local:'Miami'},
+  {id:41, grupo:'G', rodada:3, data:'2026-06-26', hora:'16:00', home:'Espanha',      away:'Uruguai',         local:'Guadalajara'},
+  {id:42, grupo:'G', rodada:3, data:'2026-06-26', hora:'21:00', home:'Cabo Verde',   away:'Arábia Saudita',  local:'Houston'},
+  {id:43, grupo:'H', rodada:1, data:'2026-06-15', hora:'16:00', home:'Bélgica',      away:'Egito',           local:'Seattle'},
+  {id:44, grupo:'H', rodada:1, data:'2026-06-15', hora:'22:00', home:'Irã',          away:'Nova Zelândia',   local:'Los Angeles'},
+  {id:45, grupo:'H', rodada:2, data:'2026-06-21', hora:'16:00', home:'Bélgica',      away:'Irã',             local:'Los Angeles'},
+  {id:46, grupo:'H', rodada:2, data:'2026-06-21', hora:'22:00', home:'Nova Zelândia',away:'Egito',           local:'Vancouver'},
+  {id:47, grupo:'H', rodada:3, data:'2026-06-27', hora:'00:00', home:'Egito',        away:'Irã',             local:'Seattle'},
+  {id:48, grupo:'H', rodada:3, data:'2026-06-27', hora:'00:00', home:'Nova Zelândia',away:'Bélgica',         local:'Vancouver'},
+  {id:49, grupo:'I', rodada:1, data:'2026-06-16', hora:'14:00', home:'Argentina',    away:'Argélia',         local:'Kansas City'},
+  {id:50, grupo:'I', rodada:1, data:'2026-06-17', hora:'01:00', home:'Áustria',      away:'Jordânia',        local:'San Francisco'},
+  {id:51, grupo:'I', rodada:2, data:'2026-06-22', hora:'14:00', home:'Argentina',    away:'Áustria',         local:'Dallas'},
+  {id:52, grupo:'I', rodada:2, data:'2026-06-23', hora:'00:00', home:'Jordânia',     away:'Argélia',         local:'San Francisco'},
+  {id:53, grupo:'I', rodada:3, data:'2026-06-27', hora:'23:00', home:'Argélia',      away:'Áustria',         local:'Kansas City'},
+  {id:54, grupo:'I', rodada:3, data:'2026-06-27', hora:'23:00', home:'Jordânia',     away:'Argentina',       local:'Dallas'},
+  {id:55, grupo:'J', rodada:1, data:'2026-06-16', hora:'16:00', home:'França',       away:'Senegal',         local:'Nova York/NJ'},
+  {id:56, grupo:'J', rodada:1, data:'2026-06-16', hora:'19:00', home:'Interconf.',   away:'Noruega',         local:'Boston'},
+  {id:57, grupo:'J', rodada:2, data:'2026-06-22', hora:'18:00', home:'França',       away:'Interconf.',      local:'Filadélfia'},
+  {id:58, grupo:'J', rodada:2, data:'2026-06-22', hora:'21:00', home:'Noruega',      away:'Senegal',         local:'Nova York/NJ'},
+  {id:59, grupo:'J', rodada:3, data:'2026-06-26', hora:'16:00', home:'Noruega',      away:'França',          local:'Boston'},
+  {id:60, grupo:'J', rodada:3, data:'2026-06-26', hora:'16:00', home:'Senegal',      away:'Interconf.',      local:'Toronto'},
+  {id:61, grupo:'K', rodada:1, data:'2026-06-17', hora:'14:00', home:'Portugal',     away:'Repechagem 2',    local:'Houston'},
+  {id:62, grupo:'K', rodada:1, data:'2026-06-17', hora:'23:00', home:'Uzbequistão', away:'Colômbia',        local:'Cidade do México'},
+  {id:63, grupo:'K', rodada:2, data:'2026-06-23', hora:'14:00', home:'Portugal',     away:'Uzbequistão',     local:'Houston'},
+  {id:64, grupo:'K', rodada:2, data:'2026-06-23', hora:'23:00', home:'Colômbia',     away:'Repechagem 2',    local:'Guadalajara'},
+  {id:65, grupo:'K', rodada:3, data:'2026-06-27', hora:'20:30', home:'Colômbia',     away:'Portugal',        local:'Miami'},
+  {id:66, grupo:'K', rodada:3, data:'2026-06-27', hora:'20:30', home:'Repechagem 2', away:'Uzbequistão',     local:'Atlanta'},
+  {id:67, grupo:'L', rodada:1, data:'2026-06-17', hora:'17:00', home:'Inglaterra',   away:'Croácia',         local:'Dallas'},
+  {id:68, grupo:'L', rodada:1, data:'2026-06-17', hora:'20:00', home:'Gana',         away:'Panamá',          local:'Toronto'},
+  {id:69, grupo:'L', rodada:2, data:'2026-06-23', hora:'17:00', home:'Inglaterra',   away:'Gana',            local:'Boston'},
+  {id:70, grupo:'L', rodada:2, data:'2026-06-23', hora:'20:00', home:'Panamá',       away:'Croácia',         local:'Toronto'},
+  {id:71, grupo:'L', rodada:3, data:'2026-06-27', hora:'18:00', home:'Panamá',       away:'Inglaterra',      local:'Nova York/NJ'},
+  {id:72, grupo:'L', rodada:3, data:'2026-06-27', hora:'18:00', home:'Croácia',      away:'Gana',            local:'Filadélfia'},
 ];
 
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let apostas = JSON.parse(localStorage.getItem('pm_apostas') || '[]');
-let cotacao = parseFloat(localStorage.getItem('pm_cotacao') || '5.70');
-let bankrollInicial = parseFloat(localStorage.getItem('pm_bankroll') || '100');
-let oddsCache = {}; // { jogoId: { home: 2.1, draw: 3.3, away: 3.5 } }
-let jogoParaApostar = null;
+// ═══════════════════ STATE ═══════════════════
+let apostas        = JSON.parse(localStorage.getItem('pm_apostas') || '[]');
+let cotacao        = parseFloat(localStorage.getItem('pm_cotacao') || '5.70');
+let bankrollInicial= parseFloat(localStorage.getItem('pm_bankroll') || '100');
+let oddsCache      = {};
+let jogoParaApostar= null;
+let darkMode       = localStorage.getItem('pm_theme') === 'dark' ||
+                     (!localStorage.getItem('pm_theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
 
-// ═══════════════════════════════════════════════
-// COTAÇÃO
-// ═══════════════════════════════════════════════
+// ═══════════════════ TEMA ═══════════════════
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  document.getElementById('theme-toggle').textContent = darkMode ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  darkMode = !darkMode;
+  localStorage.setItem('pm_theme', darkMode ? 'dark' : 'light');
+  applyTheme();
+  // redraw chart if visible
+  if (document.getElementById('panel-grafico').classList.contains('active')) renderGrafico();
+}
+applyTheme();
+
+// ═══════════════════ COTAÇÃO ═══════════════════
 async function fetchCotacao() {
   try {
     const r = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
     const d = await r.json();
     cotacao = parseFloat(d.USDBRL.bid);
     localStorage.setItem('pm_cotacao', cotacao);
-    document.getElementById('cotacao-label').textContent = `USD/BRL · R$ ${cotacao.toFixed(4)}`;
+    document.getElementById('cotacao-label').textContent = `USD/BRL R$ ${cotacao.toFixed(4)}`;
     atualizarTudo();
   } catch {
-    document.getElementById('cotacao-label').textContent = `USD/BRL · R$ ${cotacao.toFixed(2)} (offline)`;
+    document.getElementById('cotacao-label').textContent = `R$ ${cotacao.toFixed(2)} (offline)`;
   }
 }
 
-// ═══════════════════════════════════════════════
-// POLYMARKET ODDS — busca no browser (sem CORS)
-// ═══════════════════════════════════════════════
+// ═══════════════════ POLYMARKET ODDS ═══════════════════
 async function fetchOddsPolymarket() {
   const btn = document.getElementById('btn-refresh-odds');
-  btn.textContent = 'Buscando...';
-  btn.disabled = true;
-
-  // Termos de busca para Copa do Mundo na Gamma API
-  const queries = ['World Cup 2026', 'FIFA World Cup winner', 'soccer World Cup'];
-
-  try {
-    for (const q of queries) {
-      const url = `https://gamma-api.polymarket.com/markets?tag=soccer&limit=50&active=true`;
-      const r = await fetch(url);
-      if (!r.ok) continue;
-      const markets = await r.json();
-      processarMercadosPolymarket(markets);
-      break;
-    }
-  } catch(e) {
-    // fallback: tentar CLOB midpoints para jogos conhecidos
-    await fetchOddsFallback();
-  }
-
-  btn.textContent = 'Atualizar Odds Polymarket';
-  btn.disabled = false;
-  renderJogos();
-  showToast('Odds atualizadas');
-}
-
-async function fetchOddsFallback() {
-  // Buscar mercados de futebol via Gamma sem CORS issues
+  btn.textContent = 'Buscando…'; btn.disabled = true;
   try {
     const r = await fetch('https://gamma-api.polymarket.com/markets?tag=soccer&closed=false&limit=100');
     if (r.ok) {
       const data = await r.json();
-      processarMercadosPolymarket(Array.isArray(data) ? data : (data.markets || []));
+      processarMercados(Array.isArray(data) ? data : (data.markets || []));
     }
-  } catch(e) {
-    console.warn('Polymarket offline ou bloqueado nesta rede.', e);
-  }
+  } catch(e) { console.warn('Polymarket indisponível', e); }
+  btn.textContent = 'Atualizar Odds'; btn.disabled = false;
+  renderJogos(); showToast('Odds atualizadas');
 }
 
-function processarMercadosPolymarket(markets) {
+function processarMercados(markets) {
   if (!Array.isArray(markets)) return;
   for (const m of markets) {
     const q = (m.question || m.title || '').toLowerCase();
-    for (const jogo of JOGOS) {
-      const h = jogo.home.toLowerCase();
-      const a = jogo.away.toLowerCase();
-      // Match simples: se a pergunta menciona os dois times
-      if (q.includes(h.split(' ')[0]) && q.includes(a.split(' ')[0])) {
-        // Tokens: normalmente YES/NO ou Time1/Time2/Draw
+    for (const j of JOGOS) {
+      if (q.includes(j.home.split(' ')[0].toLowerCase()) && q.includes(j.away.split(' ')[0].toLowerCase())) {
         const tokens = m.tokens || m.outcomes || [];
-        if (tokens.length >= 2) {
-          const prices = tokens.map(t => parseFloat(t.price || t.probability || 0));
-          const sum = prices.reduce((a,b)=>a+b,0);
-          // normalizar para que somem 1
-          const norm = prices.map(p => sum > 0 ? p/sum : 0);
-          if (tokens.length === 2) {
-            // binário: YES = home win
-            oddsCache[jogo.id] = {
-              home: norm[0] > 0 ? +(1/norm[0]).toFixed(2) : null,
-              away: norm[1] > 0 ? +(1/norm[1]).toFixed(2) : null,
-              draw: null,
-              prob_home: (norm[0]*100).toFixed(1),
-              prob_away: (norm[1]*100).toFixed(1),
-            };
-          } else if (tokens.length >= 3) {
-            oddsCache[jogo.id] = {
-              home: norm[0] > 0 ? +(1/norm[0]).toFixed(2) : null,
-              draw: norm[1] > 0 ? +(1/norm[1]).toFixed(2) : null,
-              away: norm[2] > 0 ? +(1/norm[2]).toFixed(2) : null,
-              prob_home: (norm[0]*100).toFixed(1),
-              prob_draw:  (norm[1]*100).toFixed(1),
-              prob_away: (norm[2]*100).toFixed(1),
-            };
-          }
-        }
+        if (tokens.length < 2) continue;
+        const prices = tokens.map(t => parseFloat(t.price || t.probability || 0));
+        const sum = prices.reduce((a,b)=>a+b,0);
+        const n = prices.map(p => sum>0 ? p/sum : 0);
+        oddsCache[j.id] = tokens.length >= 3
+          ? { home: n[0]>0?+(1/n[0]).toFixed(2):null, draw: n[1]>0?+(1/n[1]).toFixed(2):null, away: n[2]>0?+(1/n[2]).toFixed(2):null, ph:(n[0]*100).toFixed(1), pd:(n[1]*100).toFixed(1), pa:(n[2]*100).toFixed(1) }
+          : { home: n[0]>0?+(1/n[0]).toFixed(2):null, draw: null, away: n[1]>0?+(1/n[1]).toFixed(2):null, ph:(n[0]*100).toFixed(1), pa:(n[1]*100).toFixed(1) };
       }
     }
   }
 }
 
-// ═══════════════════════════════════════════════
-// RENDER JOGOS
-// ═══════════════════════════════════════════════
+// ═══════════════════ RENDER JOGOS ═══════════════════
 function renderJogos() {
-  const filtroGrupo   = document.getElementById('filtro-grupo').value;
-  const filtroRodada  = document.getElementById('filtro-rodada').value;
-  const busca         = document.getElementById('busca-jogo').value.toLowerCase().trim();
-
-  let lista = JOGOS.filter(j => {
-    if (filtroGrupo !== 'todos' && j.grupo !== filtroGrupo) return false;
-    if (filtroRodada !== 'todos' && j.rodada !== parseInt(filtroRodada)) return false;
-    if (busca && !j.home.toLowerCase().includes(busca) && !j.away.toLowerCase().includes(busca)) return false;
-    return true;
-  });
-
-  const tbody = document.getElementById('tbody-jogos');
-  const rdNome = {1:'1ª Rodada', 2:'2ª Rodada', 3:'3ª Rodada'};
+  const fg = document.getElementById('filtro-grupo').value;
+  const fr = document.getElementById('filtro-rodada').value;
+  const fb = document.getElementById('busca-jogo').value.toLowerCase().trim();
+  const rdN = {1:'1ª Rd', 2:'2ª Rd', 3:'3ª Rd'};
   const hoje = new Date();
 
+  const lista = JOGOS.filter(j =>
+    (fg==='todos'||j.grupo===fg) &&
+    (fr==='todos'||j.rodada===parseInt(fr)) &&
+    (!fb || j.home.toLowerCase().includes(fb) || j.away.toLowerCase().includes(fb))
+  );
+
+  // — Desktop table —
+  const tbody = document.getElementById('tbody-jogos');
   tbody.innerHTML = lista.map(j => {
-    const dataJogo = new Date(j.data + 'T' + j.hora + ':00');
-    const passado  = dataJogo < hoje;
-    const ehBrasil = j.home === 'Brasil' || j.away === 'Brasil';
-    const odds     = oddsCache[j.id];
-
-    let oddsHtml = '';
-    if (odds) {
-      oddsHtml = `<div class="odds-cell">
-        <span class="odd-pill odd-home" title="${odds.prob_home || ''}%">${j.home.split(' ')[0]} ${odds.home || '—'}x</span>
-        ${odds.draw ? `<span class="odd-pill odd-draw" title="${odds.prob_draw || ''}%">Empate ${odds.draw}x</span>` : ''}
-        <span class="odd-pill odd-away" title="${odds.prob_away || ''}%">${j.away.split(' ')[0]} ${odds.away || '—'}x</span>
-      </div>`;
-    } else {
-      oddsHtml = `<span class="odds-loading">Clique em "Atualizar"</span>`;
-    }
-
-    const dataFmt = new Date(j.data + 'T12:00:00').toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit'});
-
-    return `<tr style="${ehBrasil ? 'background:rgba(0,156,59,0.04)' : ''}${passado ? 'opacity:.6' : ''}">
-      <td><span class="grupo-tag">Grupo ${j.grupo}</span></td>
-      <td style="color:var(--muted);font-size:12px">${rdNome[j.rodada]}</td>
-      <td style="font-size:12px;color:var(--muted);white-space:nowrap">${dataFmt} ${j.hora}</td>
-      <td style="font-weight:${ehBrasil?'600':'500'};white-space:nowrap">
-        ${ehBrasil ? '🇧🇷 ' : ''}${j.home} <span style="color:var(--muted);font-weight:400">x</span> ${j.away}
-      </td>
+    const passado = new Date(j.data+'T'+j.hora+':00') < hoje;
+    const ehBR = j.home==='Brasil'||j.away==='Brasil';
+    const o = oddsCache[j.id];
+    const oddHtml = o
+      ? `<div class="odds-cell">
+          <span class="odd-pill odd-home">${j.home.split(' ')[0]} ${o.home||'—'}x</span>
+          ${o.draw?`<span class="odd-pill odd-draw">Emp ${o.draw}x</span>`:''}
+          <span class="odd-pill odd-away">${j.away.split(' ')[0]} ${o.away||'—'}x</span>
+         </div>`
+      : `<span class="odds-loading">— clique Atualizar —</span>`;
+    const df = new Date(j.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    return `<tr style="${ehBR?'background:rgba(0,156,59,0.05)':''}${passado?';opacity:.55':''}">
+      <td><span class="grupo-tag">Gr ${j.grupo}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${rdN[j.rodada]}</td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap">${df} ${j.hora}</td>
+      <td style="font-weight:${ehBR?'600':'500'};white-space:nowrap">${ehBR?'🇧🇷 ':''}${j.home} <span style="color:var(--muted);font-weight:400">x</span> ${j.away}</td>
       <td style="font-size:12px;color:var(--muted)">${j.local}</td>
-      <td>${oddsHtml}</td>
-      <td>
-        <button class="btn btn-green btn-sm" onclick="abrirModalJogo(${j.id})">Apostar</button>
-      </td>
+      <td>${oddHtml}</td>
+      <td><button class="btn btn-green btn-sm" onclick="abrirModalJogo(${j.id})">Apostar</button></td>
     </tr>`;
-  }).join('');
+  }).join('') || `<tr><td colspan="7"><div class="empty-state" style="padding:32px"><p>Nenhum jogo encontrado.</p></div></td></tr>`;
 
-  if (!lista.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state" style="padding:32px"><p>Nenhum jogo encontrado com esse filtro.</p></div></td></tr>`;
-  }
+  // — Mobile cards —
+  const ml = document.getElementById('jogo-list-mobile');
+  ml.innerHTML = lista.map(j => {
+    const passado = new Date(j.data+'T'+j.hora+':00') < hoje;
+    const ehBR = j.home==='Brasil'||j.away==='Brasil';
+    const o = oddsCache[j.id];
+    const df = new Date(j.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const oddHtml = o
+      ? `<span class="odd-pill odd-home">${j.home.split(' ')[0]} ${o.home||'—'}x</span>
+         ${o.draw?`<span class="odd-pill odd-draw">Emp ${o.draw}x</span>`:''}
+         <span class="odd-pill odd-away">${j.away.split(' ')[0]} ${o.away||'—'}x</span>`
+      : `<span class="odds-loading">Clique em Atualizar Odds</span>`;
+    return `<div class="jogo-card${ehBR?' brasil':''}" style="${passado?'opacity:.55':''}">
+      <div class="jogo-card-top">
+        <div class="jogo-card-meta">
+          <span class="grupo-tag">Gr ${j.grupo}</span>
+          <span class="rodada-tag">${rdN[j.rodada]}</span>
+          <span style="font-size:11px;color:var(--muted)">${df} ${j.hora}</span>
+        </div>
+      </div>
+      <div class="jogo-card-partida">${ehBR?'🇧🇷 ':''}${j.home} <span style="color:var(--muted);font-weight:400">x</span> ${j.away}</div>
+      <div class="jogo-card-local">${j.local}</div>
+      <div class="jogo-card-odds">${oddHtml}</div>
+      <button class="btn btn-green btn-sm btn-full" onclick="abrirModalJogo(${j.id})">Apostar neste jogo</button>
+    </div>`;
+  }).join('') || `<div class="empty-state"><p>Nenhum jogo encontrado.</p></div>`;
 }
 
-// ═══════════════════════════════════════════════
-// MODAL APOSTAR JOGO
-// ═══════════════════════════════════════════════
-function abrirModalJogo(jogoId) {
-  jogoParaApostar = JOGOS.find(j => j.id === jogoId);
+// ═══════════════════ MODAL JOGO ═══════════════════
+function abrirModalJogo(id) {
+  jogoParaApostar = JOGOS.find(j=>j.id===id);
   if (!jogoParaApostar) return;
-
-  document.getElementById('modal-jogo-title').textContent =
-    `Apostar: ${jogoParaApostar.home} x ${jogoParaApostar.away}`;
+  document.getElementById('modal-jogo-title').textContent = `${jogoParaApostar.home} x ${jogoParaApostar.away}`;
   document.getElementById('modal-data').value = jogoParaApostar.data;
-
-  const odds = oddsCache[jogoId];
+  const o = oddsCache[id];
   const sel = document.getElementById('modal-odd-sel');
   sel.innerHTML = '';
-
-  const opcoes = [
-    { label: `${jogoParaApostar.home} vence`, odd: odds?.home || '' },
-    { label: `Empate`, odd: odds?.draw || '' },
-    { label: `${jogoParaApostar.away} vence`, odd: odds?.away || '' },
-    { label: `Ambas marcam (Sim)`, odd: '' },
-    { label: `Outro mercado`, odd: '' },
-  ].filter(o => o.label !== 'Empate' || odds?.draw);
-
-  opcoes.forEach(o => {
+  [
+    { label: `${jogoParaApostar.home} vence`, odd: o?.home||'' },
+    ...(o?.draw ? [{ label: 'Empate', odd: o.draw }] : []),
+    { label: `${jogoParaApostar.away} vence`, odd: o?.away||'' },
+    { label: 'Ambas marcam (Sim)', odd: '' },
+    { label: 'Outro mercado', odd: '' },
+  ].forEach(op => {
     const opt = document.createElement('option');
-    opt.value = JSON.stringify(o);
-    opt.textContent = o.odd ? `${o.label}  —  odd ${o.odd}x` : o.label;
+    opt.value = JSON.stringify(op);
+    opt.textContent = op.odd ? `${op.label} — ${op.odd}x` : op.label;
     sel.appendChild(opt);
   });
-
-  atualizarRetornoModal();
-  sel.onchange = atualizarRetornoModal;
-  document.getElementById('modal-valor').oninput = atualizarRetornoModal;
+  atualizarRetorno();
+  sel.onchange = atualizarRetorno;
+  document.getElementById('modal-valor').oninput = atualizarRetorno;
+  document.getElementById('modal-valor').value = '';
   document.getElementById('modal-aposta-jogo').classList.add('open');
 }
-
-function atualizarRetornoModal() {
-  const sel = document.getElementById('modal-odd-sel');
-  const val = parseFloat(document.getElementById('modal-valor').value) || 0;
+function atualizarRetorno() {
   try {
-    const op = JSON.parse(sel.value);
-    const odd = parseFloat(op.odd) || 0;
-    if (odd && val) {
-      document.getElementById('modal-retorno').textContent = `$${(val * odd).toFixed(2)}`;
-      document.getElementById('modal-lucro').textContent   = `$${(val * odd - val).toFixed(2)}`;
-    } else {
-      document.getElementById('modal-retorno').textContent = '—';
-      document.getElementById('modal-lucro').textContent   = '—';
-    }
+    const op = JSON.parse(document.getElementById('modal-odd-sel').value);
+    const v  = parseFloat(document.getElementById('modal-valor').value)||0;
+    const odd = parseFloat(op.odd)||0;
+    document.getElementById('modal-retorno').textContent = odd&&v ? `$${(v*odd).toFixed(2)}` : '—';
+    document.getElementById('modal-lucro').textContent   = odd&&v ? `$${(v*odd-v).toFixed(2)}` : '—';
   } catch {}
 }
-
-function fecharModalJogo() {
-  document.getElementById('modal-aposta-jogo').classList.remove('open');
-  jogoParaApostar = null;
-}
-
+function fecharModalJogo() { document.getElementById('modal-aposta-jogo').classList.remove('open'); jogoParaApostar=null; }
 function confirmarApostaJogo() {
   if (!jogoParaApostar) return;
-  const sel = document.getElementById('modal-odd-sel');
-  const val = parseFloat(document.getElementById('modal-valor').value);
-  const data = document.getElementById('modal-data').value;
-  if (!val || !data) { alert('Preencha valor e data.'); return; }
-
-  let op = {};
-  try { op = JSON.parse(sel.value); } catch {}
-
-  const odd = parseFloat(op.odd) || 0;
-  if (!odd) { alert('Informe ou selecione uma odd válida.'); return; }
-
-  apostas.unshift({
-    partida: `${jogoParaApostar.home} x ${jogoParaApostar.away}`,
-    valor: val,
-    odd: odd,
-    data: data,
-    resultado: 'pendente',
-    categoria: op.label || 'vencedor',
-    id: Date.now()
-  });
-  salvarApostas();
-  fecharModalJogo();
-  switchTab('apostas');
-  atualizarTudo();
-  showToast('Aposta registrada');
+  const v = parseFloat(document.getElementById('modal-valor').value);
+  const d = document.getElementById('modal-data').value;
+  if (!v||!d) { showToast('Preencha valor e data'); return; }
+  let op={};
+  try { op=JSON.parse(document.getElementById('modal-odd-sel').value); } catch {}
+  const odd=parseFloat(op.odd)||0;
+  if (!odd) { showToast('Selecione um mercado com odd'); return; }
+  apostas.unshift({ partida:`${jogoParaApostar.home} x ${jogoParaApostar.away}`, valor:v, odd, data:d, resultado:'pendente', categoria:op.label||'vencedor', id:Date.now() });
+  salvarApostas(); fecharModalJogo(); switchTab('apostas'); atualizarTudo(); showToast('Aposta registrada');
 }
 
-// ═══════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════
+// ═══════════════════ TABS ═══════════════════
 function switchTab(id) {
-  const ids = ['jogos','apostas','juros','grafico'];
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ids[i] === id));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  if (id === 'grafico') renderGrafico();
-  if (id === 'juros')   calcularJuros();
-  if (id === 'jogos')   renderJogos();
+  const ids=['jogos','apostas','juros','grafico'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',ids[i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(id==='grafico') renderGrafico();
+  if(id==='juros')   calcularJuros();
+  if(id==='jogos')   renderJogos();
 }
 
-// ═══════════════════════════════════════════════
-// APOSTAS
-// ═══════════════════════════════════════════════
-function salvarApostas() { localStorage.setItem('pm_apostas', JSON.stringify(apostas)); }
+// ═══════════════════ APOSTAS ═══════════════════
+function salvarApostas() { localStorage.setItem('pm_apostas',JSON.stringify(apostas)); }
 function salvarBankroll() {
-  bankrollInicial = parseFloat(document.getElementById('bankroll-inicial').value) || 100;
-  localStorage.setItem('pm_bankroll', bankrollInicial);
-  atualizarTudo();
+  bankrollInicial=parseFloat(document.getElementById('bankroll-inicial').value)||100;
+  localStorage.setItem('pm_bankroll',bankrollInicial); atualizarTudo();
 }
-
 function limparForm() {
-  ['f-partida','f-valor','f-odd'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-resultado').value = 'pendente';
-  document.getElementById('f-categoria').value = 'vencedor';
-  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+  ['f-partida','f-valor','f-odd'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-resultado').value='pendente';
+  document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
 }
-
 function adicionarAposta() {
-  const partida = document.getElementById('f-partida').value.trim();
-  const valor   = parseFloat(document.getElementById('f-valor').value);
-  const odd     = parseFloat(document.getElementById('f-odd').value);
-  const data    = document.getElementById('f-data').value;
-  const resultado = document.getElementById('f-resultado').value;
-  const categoria = document.getElementById('f-categoria').value;
-  if (!partida || !valor || !odd || !data) { alert('Preencha todos os campos.'); return; }
-  apostas.unshift({ partida, valor, odd, data, resultado, categoria, id: Date.now() });
-  salvarApostas();
-  limparForm();
-  atualizarTudo();
-  showToast('Aposta registrada');
+  const partida=document.getElementById('f-partida').value.trim();
+  const valor=parseFloat(document.getElementById('f-valor').value);
+  const odd=parseFloat(document.getElementById('f-odd').value);
+  const data=document.getElementById('f-data').value;
+  const resultado=document.getElementById('f-resultado').value;
+  const categoria=document.getElementById('f-categoria').value;
+  if(!partida||!valor||!odd||!data){showToast('Preencha todos os campos');return;}
+  apostas.unshift({partida,valor,odd,data,resultado,categoria,id:Date.now()});
+  salvarApostas(); limparForm(); atualizarTudo(); showToast('Aposta registrada');
 }
-
 function calcLucro(a) {
-  if (a.resultado === 'ganhou') return +(a.valor * a.odd - a.valor).toFixed(2);
-  if (a.resultado === 'perdeu') return -a.valor;
+  if(a.resultado==='ganhou') return +(a.valor*a.odd-a.valor).toFixed(2);
+  if(a.resultado==='perdeu') return -a.valor;
   return 0;
 }
 function calcRetorno(a) {
-  if (a.resultado === 'ganhou') return +(a.valor * a.odd).toFixed(2);
-  if (a.resultado === 'perdeu') return 0;
+  if(a.resultado==='ganhou') return +(a.valor*a.odd).toFixed(2);
+  if(a.resultado==='perdeu') return 0;
   return a.valor;
 }
-
 function calcKPIs() {
-  const final = apostas.filter(a => a.resultado !== 'pendente');
-  const G = final.filter(a => a.resultado === 'ganhou').length;
-  const L = final.filter(a => a.resultado === 'perdeu').length;
-  const lucro = apostas.reduce((s,a) => s + calcLucro(a), 0);
-  const inv   = apostas.reduce((s,a) => s + a.valor, 0);
-  const roi   = inv > 0 ? (lucro/inv)*100 : 0;
-  const bk    = bankrollInicial + lucro;
-  const taxa  = final.length ? (G/final.length)*100 : null;
-  let maxStreak=0, cur=0;
+  const final=apostas.filter(a=>a.resultado!=='pendente');
+  const G=final.filter(a=>a.resultado==='ganhou').length;
+  const L=final.filter(a=>a.resultado==='perdeu').length;
+  const lucro=apostas.reduce((s,a)=>s+calcLucro(a),0);
+  const inv=apostas.reduce((s,a)=>s+a.valor,0);
+  const roi=inv>0?(lucro/inv)*100:0;
+  const bk=bankrollInicial+lucro;
+  const taxa=final.length?(G/final.length)*100:null;
+  let mx=0,cur=0;
   [...apostas].filter(a=>a.resultado!=='pendente').reverse().forEach(a=>{
-    if(a.resultado==='ganhou'){cur++;maxStreak=Math.max(maxStreak,cur);}else cur=0;
+    if(a.resultado==='ganhou'){cur++;mx=Math.max(mx,cur);}else cur=0;
   });
-  return { lucro, inv, roi, bk, taxa, G, L, maxStreak };
+  return{lucro,inv,roi,bk,taxa,G,L,maxStreak:mx};
 }
-
 function renderKPIs() {
-  const k = calcKPIs();
-  const f  = v => `$${Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-  const fR = v => `R$ ${(Math.abs(v)*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-  const el = (id,txt,cls='') => { const e=document.getElementById(id); e.textContent=txt; e.className='kpi-value '+cls; };
-
-  el('kpi-bankroll', f(k.bk), 'kv-blue');
-  document.getElementById('kpi-bankroll-brl').textContent = fR(k.bk);
-
-  const s = k.lucro>=0?'+':'-';
-  el('kpi-lucro', s+f(k.lucro), k.lucro>=0?'kv-green':'kv-red');
-  document.getElementById('kpi-lucro-brl').textContent = (k.lucro>=0?'+':'-')+fR(k.lucro);
-
-  el('kpi-roi', (k.roi>=0?'+':'')+k.roi.toFixed(2)+'%', k.roi>=0?'kv-green':'kv-red');
-  document.getElementById('kpi-count').textContent = apostas.length+' apostas';
-
-  el('kpi-taxa', k.taxa!==null?k.taxa.toFixed(1)+'%':'—', 'kv-blue');
-  document.getElementById('kpi-wl').textContent = `${k.G}W / ${k.L}L`;
-
-  el('kpi-streak', k.maxStreak, 'kv-green');
+  const k=calcKPIs();
+  const f=v=>`$${Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+  const fR=v=>`R$${(Math.abs(v)*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+  const el=(id,txt,cls='')=>{const e=document.getElementById(id);e.textContent=txt;e.className='kpi-value '+cls;};
+  el('kpi-bankroll',f(k.bk),'kv-blue');
+  document.getElementById('kpi-bankroll-brl').textContent=fR(k.bk);
+  el('kpi-lucro',(k.lucro>=0?'+':'-')+f(k.lucro),k.lucro>=0?'kv-green':'kv-red');
+  document.getElementById('kpi-lucro-brl').textContent=(k.lucro>=0?'+':'-')+fR(k.lucro);
+  el('kpi-roi',(k.roi>=0?'+':'')+k.roi.toFixed(2)+'%',k.roi>=0?'kv-green':'kv-red');
+  document.getElementById('kpi-count').textContent=apostas.length+' apostas';
+  el('kpi-taxa',k.taxa!==null?k.taxa.toFixed(1)+'%':'—','kv-blue');
+  document.getElementById('kpi-wl').textContent=`${k.G}W/${k.L}L`;
+  el('kpi-streak',k.maxStreak,'kv-green');
 }
-
 function renderApostas() {
-  const filtro = document.getElementById('filtro-resultado').value;
-  const lista  = apostas.filter(a => filtro==='todos' || a.resultado===filtro);
-  const tbody  = document.getElementById('tbody-apostas');
-  const empty  = document.getElementById('empty-apostas');
-  if (!lista.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  const badges = {
+  const filtro=document.getElementById('filtro-resultado').value;
+  const lista=apostas.filter(a=>filtro==='todos'||a.resultado===filtro);
+  const badges={
     ganhou:'<span class="badge badge-green">Ganhou</span>',
     perdeu:'<span class="badge badge-red">Perdeu</span>',
     pendente:'<span class="badge badge-yellow">Pendente</span>'
   };
-  tbody.innerHTML = lista.map(a => {
-    const lucro = calcLucro(a);
-    const ret   = calcRetorno(a);
-    const lC    = lucro>0?'pos':lucro<0?'neg':'';
-    const lPre  = lucro>0?'+':'';
-    const brl   = (Math.abs(lucro)*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2});
-    const brlS  = lucro>=0?'+':'-';
-    const idx   = apostas.indexOf(a);
-    const dataFmt = a.data ? new Date(a.data+'T12:00:00').toLocaleDateString('pt-BR') : '—';
-    return `<tr>
-      <td style="color:var(--muted);font-size:11px">${idx+1}</td>
-      <td style="color:var(--muted)">${dataFmt}</td>
-      <td style="font-weight:500">${a.partida}</td>
-      <td>$${parseFloat(a.valor).toFixed(2)}</td>
-      <td>${parseFloat(a.odd).toFixed(2)}x</td>
-      <td>$${ret.toFixed(2)}</td>
-      <td class="td-profit ${lC}">${lPre}$${Math.abs(lucro).toFixed(2)}</td>
-      <td style="font-size:12px;color:var(--muted)">${brlS} R$ ${brl}</td>
-      <td>${badges[a.resultado]}</td>
-      <td style="display:flex;gap:4px">
-        <button class="btn btn-ghost btn-sm" onclick="abrirModal(${idx})">Editar</button>
-        <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="remover(${idx})">✕</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
 
-function remover(idx) {
-  if (!confirm('Remover?')) return;
-  apostas.splice(idx,1); salvarApostas(); atualizarTudo();
+  // Desktop
+  const tbody=document.getElementById('tbody-apostas');
+  const emptyT=document.getElementById('empty-apostas-table');
+  if(!lista.length){tbody.innerHTML='';emptyT.style.display='block';}
+  else {
+    emptyT.style.display='none';
+    tbody.innerHTML=lista.map(a=>{
+      const lucro=calcLucro(a),ret=calcRetorno(a);
+      const lC=lucro>0?'pos':lucro<0?'neg':'';
+      const idx=apostas.indexOf(a);
+      const df=a.data?new Date(a.data+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+      return `<tr>
+        <td style="color:var(--muted);font-size:11px">${idx+1}</td>
+        <td style="color:var(--muted);font-size:12px">${df}</td>
+        <td style="font-weight:500">${a.partida}</td>
+        <td>$${parseFloat(a.valor).toFixed(2)}</td>
+        <td>${parseFloat(a.odd).toFixed(2)}x</td>
+        <td>$${ret.toFixed(2)}</td>
+        <td class="td-profit ${lC}">${lucro>0?'+':''}$${Math.abs(lucro).toFixed(2)}</td>
+        <td style="font-size:11px;color:var(--muted)">${lucro>=0?'+':'-'}R$${(Math.abs(lucro)*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+        <td>${badges[a.resultado]}</td>
+        <td style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="abrirModal(${idx})">Editar</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="remover(${idx})">✕</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Mobile
+  const ml=document.getElementById('aposta-list-mobile');
+  const emptyM=document.getElementById('empty-apostas-mobile');
+  if(!lista.length){ml.innerHTML='';emptyM.style.display='block';}
+  else {
+    emptyM.style.display='none';
+    ml.innerHTML=lista.map(a=>{
+      const lucro=calcLucro(a);
+      const lC=lucro>0?'kv-green':lucro<0?'kv-red':'';
+      const idx=apostas.indexOf(a);
+      const df=a.data?new Date(a.data+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+      return `<div class="aposta-card">
+        <div class="aposta-card-top">
+          <div>
+            <div class="aposta-card-partida">${a.partida}</div>
+            <div class="aposta-card-data">${df} · ${a.odd}x</div>
+          </div>
+          ${badges[a.resultado]}
+        </div>
+        <div class="aposta-card-row">
+          <span style="font-size:13px">Apostado: <strong>$${parseFloat(a.valor).toFixed(2)}</strong></span>
+          <span style="font-size:13px" class="${lC}">Lucro: <strong>${lucro>=0?'+':''}$${Math.abs(lucro).toFixed(2)}</strong></span>
+        </div>
+        <div class="aposta-card-actions">
+          <button class="btn btn-ghost btn-sm" style="flex:1" onclick="abrirModal(${idx})">Editar resultado</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="remover(${idx})">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
 }
-function abrirModal(idx) {
-  document.getElementById('edit-idx').value = idx;
-  document.getElementById('edit-resultado').value = apostas[idx].resultado;
+function remover(idx){if(!confirm('Remover?'))return;apostas.splice(idx,1);salvarApostas();atualizarTudo();}
+function abrirModal(idx){
+  document.getElementById('edit-idx').value=idx;
+  document.getElementById('edit-resultado').value=apostas[idx].resultado;
   document.getElementById('modal-editar').classList.add('open');
 }
-function fecharModal() { document.getElementById('modal-editar').classList.remove('open'); }
-function salvarEdicao() {
-  const idx = parseInt(document.getElementById('edit-idx').value);
-  apostas[idx].resultado = document.getElementById('edit-resultado').value;
-  salvarApostas(); fecharModal(); atualizarTudo();
+function fecharModal(){document.getElementById('modal-editar').classList.remove('open');}
+function salvarEdicao(){
+  const idx=parseInt(document.getElementById('edit-idx').value);
+  apostas[idx].resultado=document.getElementById('edit-resultado').value;
+  salvarApostas();fecharModal();atualizarTudo();
 }
-
-function exportarCSV() {
-  const h = 'Data,Partida,Valor(USD),Odd,Retorno(USD),Lucro(USD),BRL,Status\n';
-  const r = apostas.map(a => {
-    const l=calcLucro(a), ret=calcRetorno(a);
-    return [a.data,a.partida,a.valor,a.odd,ret.toFixed(2),l.toFixed(2),(l*cotacao).toFixed(2),a.resultado].join(',');
+function exportarCSV(){
+  const h='Data,Partida,Valor(USD),Odd,Retorno(USD),Lucro(USD),BRL,Status\n';
+  const r=apostas.map(a=>{
+    const l=calcLucro(a),ret=calcRetorno(a);
+    return[a.data,a.partida,a.valor,a.odd,ret.toFixed(2),l.toFixed(2),(l*cotacao).toFixed(2),a.resultado].join(',');
   }).join('\n');
   const b=new Blob([h+r],{type:'text/csv;charset=utf-8;'});
   const u=URL.createObjectURL(b);
-  const el=document.createElement('a'); el.href=u; el.download='polymarket-apostas.csv'; el.click();
-  URL.revokeObjectURL(u);
+  const el=document.createElement('a');el.href=u;el.download='apostas.csv';el.click();URL.revokeObjectURL(u);
 }
 
-// ═══════════════════════════════════════════════
-// JUROS COMPOSTOS
-// ═══════════════════════════════════════════════
-function calcularJuros() {
-  const taxa   = parseFloat(document.getElementById('taxa-reinvest').value);
-  const ganhas = apostas.filter(a => a.resultado === 'ganhou');
-  const grid   = document.getElementById('compound-grid');
-  if (!ganhas.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:28px"><p>Registre apostas ganhas para ver a projeção.</p></div>`;
-    return;
-  }
-  const roiMedio = ganhas.reduce((s,a) => s + (a.odd-1), 0) / ganhas.length;
-  const pontos   = [1,5,10,15,20,30,50,100];
-  grid.innerHTML = `<div class="ci" style="grid-column:1/-1;background:rgba(0,113,227,.06);border-color:rgba(0,113,227,.2)">
+// ═══════════════════ JUROS ═══════════════════
+function calcularJuros(){
+  const taxa=parseFloat(document.getElementById('taxa-reinvest').value);
+  const ganhas=apostas.filter(a=>a.resultado==='ganhou');
+  const grid=document.getElementById('compound-grid');
+  if(!ganhas.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;padding:28px"><p>Registre apostas ganhas.</p></div>`;return;}
+  const roi=ganhas.reduce((s,a)=>s+(a.odd-1),0)/ganhas.length;
+  grid.innerHTML=`<div class="ci" style="grid-column:1/-1;background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.2)">
     <div class="ci-label">ROI médio por aposta ganha</div>
-    <div class="ci-value" style="color:var(--accent)">${(roiMedio*100*taxa).toFixed(2)}%</div>
-  </div>` + pontos.map(n => {
-    const bk = bankrollInicial * Math.pow(1 + roiMedio*taxa, n);
-    const g  = ((bk-bankrollInicial)/bankrollInicial*100).toFixed(1);
+    <div class="ci-value" style="color:var(--accent)">${(roi*100*taxa).toFixed(2)}%</div>
+  </div>`+[1,5,10,15,20,30,50,100].map(n=>{
+    const bk=bankrollInicial*Math.pow(1+roi*taxa,n);
+    const g=((bk-bankrollInicial)/bankrollInicial*100).toFixed(1);
     return `<div class="ci">
-      <div class="ci-label">Após ${n} apostas</div>
+      <div class="ci-label">Após ${n}x</div>
       <div class="ci-value">$${bk.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">R$ ${(bk*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">R$${(bk*cotacao).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
       <div style="font-size:11px;color:var(--green);margin-top:2px">+${g}%</div>
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════════
-// GRÁFICO
-// ═══════════════════════════════════════════════
-function renderGrafico() {
-  const canvas  = document.getElementById('chartCanvas');
-  const emptyEl = document.getElementById('empty-chart');
-  const sorted  = [...apostas].filter(a=>a.resultado!=='pendente').reverse();
-  if (!sorted.length) { canvas.style.display='none'; emptyEl.style.display='block'; return; }
-  canvas.style.display='block'; emptyEl.style.display='none';
-
+// ═══════════════════ GRÁFICO ═══════════════════
+function renderGrafico(){
+  const canvas=document.getElementById('chartCanvas');
+  const emptyEl=document.getElementById('empty-chart');
+  const sorted=[...apostas].filter(a=>a.resultado!=='pendente').reverse();
+  if(!sorted.length){canvas.style.display='none';emptyEl.style.display='block';return;}
+  canvas.style.display='block';emptyEl.style.display='none';
   let bk=bankrollInicial;
   const pts=[bk];
   for(const a of sorted){bk+=calcLucro(a);pts.push(bk);}
-
-  const W=canvas.parentElement.offsetWidth, H=200;
-  canvas.width=W; canvas.height=H;
+  const W=canvas.parentElement.offsetWidth,H=200;
+  canvas.width=W;canvas.height=H;
   const p={t:16,r:16,b:28,l:56};
-  const cW=W-p.l-p.r, cH=H-p.t-p.b;
-  const mn=Math.min(...pts)*.97, mx=Math.max(...pts)*1.03;
+  const cW=W-p.l-p.r,cH=H-p.t-p.b;
+  const mn=Math.min(...pts)*.97,mx=Math.max(...pts)*1.03;
   const sx=i=>p.l+(i/(pts.length-1))*cW;
   const sy=v=>p.t+cH-((v-mn)/(mx-mn))*cH;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='rgba(0,0,0,.06)'; ctx.lineWidth=1;
+  const gridC=darkMode?'rgba(255,255,255,.07)':'rgba(0,0,0,.06)';
+  const labelC=darkMode?'#98989d':'#6e6e73';
+  ctx.strokeStyle=gridC;ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
     const y=p.t+(cH/4)*i;
     ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();
-    ctx.fillStyle='#6e6e73';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';
+    ctx.fillStyle=labelC;ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';
     ctx.fillText('$'+(mx-((mx-mn)/4)*i).toFixed(0),p.l-6,y+3);
   }
+  const lineColor=darkMode?'#2196f3':'#0071e3';
   const g=ctx.createLinearGradient(0,p.t,0,H-p.b);
-  g.addColorStop(0,'rgba(0,113,227,.16)');g.addColorStop(1,'rgba(0,113,227,0)');
+  g.addColorStop(0,darkMode?'rgba(33,150,243,.22)':'rgba(0,113,227,.16)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
   ctx.beginPath();ctx.moveTo(sx(0),sy(pts[0]));
   for(let i=1;i<pts.length;i++)ctx.lineTo(sx(i),sy(pts[i]));
   ctx.lineTo(sx(pts.length-1),H-p.b);ctx.lineTo(sx(0),H-p.b);ctx.closePath();
   ctx.fillStyle=g;ctx.fill();
   ctx.beginPath();ctx.moveTo(sx(0),sy(pts[0]));
   for(let i=1;i<pts.length;i++)ctx.lineTo(sx(i),sy(pts[i]));
-  ctx.strokeStyle='#0071e3';ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+  ctx.strokeStyle=lineColor;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
   pts.forEach((v,i)=>{
     ctx.beginPath();ctx.arc(sx(i),sy(v),3.5,0,Math.PI*2);
-    ctx.fillStyle='#fff';ctx.strokeStyle='#0071e3';ctx.lineWidth=2;ctx.fill();ctx.stroke();
+    ctx.fillStyle=darkMode?'#1c1c1e':'#fff';ctx.strokeStyle=lineColor;ctx.lineWidth=2;ctx.fill();ctx.stroke();
   });
-  ctx.fillStyle='#6e6e73';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='center';
+  ctx.fillStyle=labelC;ctx.font='10px -apple-system,sans-serif';ctx.textAlign='center';
   pts.forEach((_,i)=>ctx.fillText(i===0?'Início':'#'+i,sx(i),H-p.b+14));
 }
 
-// ═══════════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════════
-function showToast(msg) {
+// ═══════════════════ TOAST ═══════════════════
+function showToast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+  t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// ═══════════════════════════════════════════════
-// ATUALIZAR TUDO
-// ═══════════════════════════════════════════════
-function atualizarTudo() { renderKPIs(); renderApostas(); }
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
-document.getElementById('bankroll-inicial').value = bankrollInicial;
-document.getElementById('modal-editar').addEventListener('click', e=>{ if(e.target===document.getElementById('modal-editar'))fecharModal(); });
-document.getElementById('modal-aposta-jogo').addEventListener('click', e=>{ if(e.target===document.getElementById('modal-aposta-jogo'))fecharModalJogo(); });
-
+// ═══════════════════ INIT ═══════════════════
+function atualizarTudo(){renderKPIs();renderApostas();}
+document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
+document.getElementById('bankroll-inicial').value=bankrollInicial;
+['modal-editar','modal-aposta-jogo'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{
+    if(e.target===document.getElementById(id))
+      id==='modal-editar'?fecharModal():fecharModalJogo();
+  });
+});
 fetchCotacao();
 renderJogos();
 atualizarTudo();
